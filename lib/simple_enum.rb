@@ -277,7 +277,13 @@ module SimpleEnum
       defaults << key.to_s.humanize
 
       options.reverse_merge! :count => 1, :default => defaults
-      I18n.translate(defaults.shift, options)
+
+      # quick and very hacky way to make this lib compatible with ruby 2 and 3
+      if RUBY_VERSION.split(".").first == "3"
+        eval "I18n.translate(defaults.shift, **options)"
+      else
+        I18n.translate(defaults.shift, options)
+      end
     end
 
     def enum_definitions
